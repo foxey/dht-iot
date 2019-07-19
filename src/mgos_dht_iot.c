@@ -34,11 +34,11 @@ bool mgos_dht_iot_init(void) {
 
   struct mgos_dht *dht = mgos_dht_create(pin, DHT22);
   if (dht == NULL) {
-  	  LOG(LL_WARN, ("DHT22 sensor not detected on pin %d.", pin));
+  	  LOG(LL_WARN, ("Error configuring DHT22 sensor on pin %d.", pin));
   } else {
 	  // mgos_set_timer(3000, true, timer_cb, dht);
-	  LOG(LL_INFO, ("DHT22 sensor detected on pin %d.", pin));
-  	  mgos_msleep(3000);
+	  LOG(LL_INFO, ("DHT22 sensor configured on pin %d.", pin));
+  	  mgos_msleep(1000);
   	  LOG(LL_INFO, ("Temperature: %f", mgos_dht_get_temp(dht)));
 	  LOG(LL_INFO, ("Humidity:    %f", mgos_dht_get_humidity(dht)));
 	  void mgos_dht_close(struct mgos_dht *dht);
