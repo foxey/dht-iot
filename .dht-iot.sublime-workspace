@@ -1,0 +1,375 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"ti",
+				"title\tTag"
+			],
+			[
+				"h",
+				"head\tTag"
+			],
+			[
+				"font-",
+				"font-family\tproperty"
+			],
+			[
+				"s",
+				"stage"
+			],
+			[
+				"serv",
+				"serverless"
+			],
+			[
+				"col",
+				"color\tproperty"
+			],
+			[
+				"tex",
+				"text-align\tproperty"
+			],
+			[
+				"blockquot",
+				"blockquote-primary"
+			],
+			[
+				"bl",
+				"blockquote"
+			],
+			[
+				"di",
+				"div\tTag"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"git a",
+				"Git: Add Current File"
+			],
+			[
+				"git add ",
+				"Git: Add Current File"
+			],
+			[
+				"instla",
+				"Package Control: Install Package"
+			],
+			[
+				"remo",
+				"Package Control: Remove Package"
+			],
+			[
+				"inde",
+				"Indent XML"
+			],
+			[
+				"inden",
+				"Indent JSON"
+			],
+			[
+				"iden",
+				"Indent XML"
+			],
+			[
+				"he",
+				"HexViewer: Toggle Hex View"
+			],
+			[
+				"in",
+				"Package Control: Install Package"
+			],
+			[
+				"qu",
+				"Git: Quick Commit (repo)"
+			],
+			[
+				"qui",
+				"Git: Quick Commit (repo)"
+			],
+			[
+				"git c",
+				"Git: Commit"
+			],
+			[
+				"gi",
+				"Git: Add All"
+			],
+			[
+				"git in",
+				"GitGutter: Support Info"
+			],
+			[
+				"git",
+				"Git: Status"
+			],
+			[
+				"rem",
+				"Package Control: Remove Package"
+			],
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"ma",
+				"Material Theme: Activate theme"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 200.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/C/Users/michi/Documents/GitHub/rfc-dev/mos.yml",
+		"/C/Users/michi/Documents/GitHub/rfc-dev/src/main.c",
+		"/C/Users/michi/Documents/GitHub/rfc-dev/.gitignore",
+		"/C/Users/michi/Documents/GitHub/captive-portal-wifi-setup/mos.yml",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/content/_index.md",
+		"/C/Users/michi/Documents/GitHub/captive-portal-wifi-setup.bak/mos.yml",
+		"/C/Users/michi/Documents/GitHub/rfc-dev/.rfc-dev.sublime-project",
+		"/C/Users/michi/Documents/GitHub/rfc-dev/fs/index.html",
+		"/C/Users/michi/Documents/EAGLE/projects/ESP32 addon board/eagle.epf",
+		"/C/Users/michi/.aws/config",
+		"/C/Users/michi/Documents/GitHub/rfc-dev/README.md",
+		"/C/Users/michi/Downloads/com.apple.TimeMachine.SnapshotHistory.plist",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/assets/sass/now-ui-kit/_variables.scss",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/config.toml",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/layouts/partials/head.html",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/layouts/partials/cookie_consent.html",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/content/phone.md",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/content/privacy.md",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/content/linkedin.md",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/static/css/custom.css",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/content/twitter.md",
+		"/C/Users/michi/Downloads/basic.ics",
+		"/E/octopi-wpa-supplicant.txt",
+		"/C/Users/michi/AppData/Local/Temp/7zO4695A38C/exceptions.log",
+		"/C/Users/michi/AppData/Local/Temp/7zO46978385/config.cfg",
+		"/C/Users/michi/AppData/Local/Temp/7zO46924057/config.cfg.summary.txt",
+		"/C/tools/dart-sdk/README",
+		"/C/Users/michi/AppData/Local/Temp/7zO876E5CCE/config.cfg",
+		"/C/Users/michi/AppData/Local/Temp/7zO8687C0C5/Application.log",
+		"/C/Users/michi/AppData/Local/Temp/7zO87689F6D/config.cfg.summary.txt",
+		"/C/Users/michi/AppData/Local/Temp/7zO87693978/ChartHandler.log",
+		"/C/Users/michi/AppData/Local/Temp/7zO876E58C6/Time.log",
+		"/C/Users/michi/AppData/Local/Temp/7zO876D59E5/Chart[vm2]",
+		"/C/Users/michi/AppData/Local/Temp/7zO8768584C/Monitor.log",
+		"/C/Users/michi/AppData/Local/Temp/7zE876EC0DC/Monitor.log",
+		"/C/Users/michi/AppData/Local/Temp/7zO8768B51B/assembly_versions.txt",
+		"/C/Users/michi/Documents/GitHub/todo-list/data/db.json",
+		"/C/Users/michi/Documents/GitHub/todo-list/src/models/todo.model.ts",
+		"/C/Users/michi/AppData/Local/Temp/7zO8763AF19/version_info.txt",
+		"/C/Users/michi/AppData/Local/Temp/7zO8767954C/config.cfg",
+		"/C/Users/michi/AppData/Local/Temp/~DF437569FE516117E7.TMP",
+		"/C/Users/michi/AppData/Local/Temp/{D180CDAC-0FCB-4168-B34B-6E1F6A46797D}",
+		"/C/Users/michi/AppData/Local/Temp/.session64",
+		"/C/Users/michi/AppData/Local/Temp/TCD2B4A.tmp/mlaseventheditionofficeonline.xsl",
+		"/C/Users/michi/OneDrive - Rough Consensus/Desktop/2018.09.24.1241.xml",
+		"/C/Users/michi/Downloads/181117-F-BH566-1029.JPG",
+		"/C/Users/michi/AppData/Local/Temp/7zO06DC0269/Chart[vm3]",
+		"/C/Users/michi/AppData/Local/Temp/7zO06D12A39/Chart[vm2]",
+		"/C/Users/michi/AppData/Local/Temp/7zO06D63419/Chart[vm1]",
+		"/C/Users/michi/AppData/Local/Temp/7zO06D1BEA9/Chart[vm1]",
+		"/C/Users/michi/AppData/Local/Temp/7zO06DD2955/config.cfg",
+		"/C/Users/michi/AppData/Local/Temp/Temp1_michiel.fokke@gmail.com.ical.zip/Fam. Fokke_margot.fokke@gmail.com.ics",
+		"/C/Users/michi/Documents/GitHub/loopback-trial/src/controllers/hello.controller.ts",
+		"/C/Program Files/rempl/rempl.xml",
+		"/C/Program Files/rempl/ServiceStackHardening.Inf",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/.travis.yml",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/content/thank_you.md",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/layouts/_default/single.html",
+		"/D/.device_info_a8e19f8a-5e85-4eae-a097-cf5b90343df3",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/layouts/partials/footer.html",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/layouts/_default/home.html",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/layouts/shortcodes/absURL.html",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/static/js/custom.js",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/layouts/partials/nav.html",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/themes/hugo-now-ui/layouts/partials/nav.html",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/content/about_me.md",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/content/landing.html",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/themes/hugo-now-ui/layouts/_default/single.html",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/layouts/shortcodes/portrait.html",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/layouts/shortcodes/quote.html",
+		"/Z/Archive/Andre Crone/ToonLight/Sequence Diagrammen/1 - OrderProcess.plantuml",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/layouts/shortcodes/img.html",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/static/img/michiel_fokke_s.jpg",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/COMMIT_EDITMSG.COMMIT_EDITMSG",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/layouts/404.html",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/themes/hugo-now-ui/exampleSite/content/components.html",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/assets/sass/now-ui-kit/_sections.scss",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/themes/hugo-now-ui/assets/sass/now-ui-kit/_variables.scss",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/.gitignore",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/content/components.html",
+		"/C/Users/michi/AppData/Roaming/Sublime Text 3/Packages/Color Highlighter/ColorHighlighter.sublime-settings",
+		"/C/Users/michi/Documents/GitHub/roughconsensus.github.io/README.md",
+		"/C/Users/michi/AppData/Local/Temp/hugo_extended_0.54.0_checksums.txt",
+		"/C/Users/michi/AppData/Local/Temp/hugo_0.54.0_checksums.txt",
+		"/C/Users/michi/AppData/Roaming/Sublime Text 3/Packages/Hugofy/README.md",
+		"/C/Users/michi/AppData/Roaming/Sublime Text 3/Packages/User/hugofy.sublime-settings"
+	],
+	"find":
+	{
+		"height": 29.0
+	},
+	"find_in_files":
+	{
+		"height": 159.555555556,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"build"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": true,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 29.0
+	},
+	"input":
+	{
+		"height": 67.5555555556
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.SublimeLinter":
+	{
+		"height": 0.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": ".dht-iot.sublime-project",
+	"replace":
+	{
+		"height": 54.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "loopback-trial",
+		"selected_items":
+		[
+			[
+				"loopback-trial",
+				"C:\\Users\\michi\\Documents\\GitHub\\loopback-trial\\sublime.sublime-workspace"
+			]
+		],
+		"width": 635.111111111
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 219.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
