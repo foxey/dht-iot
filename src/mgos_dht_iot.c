@@ -38,7 +38,7 @@ bool mgos_dht_iot_init(void) {
   } else {
 	  // mgos_set_timer(3000, true, timer_cb, dht);
 	  LOG(LL_INFO, ("DHT22 sensor configured on pin %d.", pin));
-  	  mgos_msleep(1000);
+  	  mgos_msleep(2000);
   	  LOG(LL_INFO, ("Temperature: %f", mgos_dht_get_temp(dht)));
 	  LOG(LL_INFO, ("Humidity:    %f", mgos_dht_get_humidity(dht)));
 	  void mgos_dht_close(struct mgos_dht *dht);
