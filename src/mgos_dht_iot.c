@@ -24,10 +24,16 @@
 #include "mgos_dht.h"
 
 bool mgos_dht_iot_init(void) {
+  int pin = mgos_sys_config_get_dht_iot_dht_pin();
   LOG(LL_INFO, ("DHT-IOT library loaded."));
-  struct mgos_dht *dht = mgos_dht_create(mgos_sys_config_get_dht_iot_dht_pin(), DHT22);
-  LOG(LL_INFO, ("Temperature: %lf", mgos_dht_get_temp(dht)));
-  LOG(LL_INFO, ("Humidity:    %lf", mgos_dht_get_humidity(dht)));
 
+  struct mgos_dht *dht = mgos_dht_create(pin, DHT22);
+  if (dht == NULL) {
+  	  LOG(LL_WARN, ("DHT22 sensor not detected on pin %d.", pin));
+  } else {
+	  LOG(LL_INFO, ("Temperature: %lf", mgos_dht_get_temp(dht)));
+	  LOG(LL_INFO, ("Humidity:    %lf", mgos_dht_get_humidity(dht)));
+	  void mgos_dht_close(struct mgos_dht *dht);
+  }
   return true;
 }
