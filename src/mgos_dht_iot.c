@@ -23,11 +23,6 @@
 #include "mgos.h"
 #include "mgos_dht.h"
 
-static void timer_cb(void *dht) {
-  LOG(LL_INFO, ("Temperature: %lf", mgos_dht_get_temp(dht)));
-  LOG(LL_INFO, ("Humidity:    %lf", mgos_dht_get_humidity(dht)));
-}
-
 bool mgos_dht_iot_init(void) {
   int pin = mgos_sys_config_get_dht_iot_dht_pin();
   LOG(LL_INFO, ("DHT-IOT library loaded."));
@@ -36,7 +31,6 @@ bool mgos_dht_iot_init(void) {
   if (dht == NULL) {
   	  LOG(LL_WARN, ("Error configuring DHT22 sensor on pin %d.", pin));
   } else {
-	  // mgos_set_timer(3000, true, timer_cb, dht);
 	  LOG(LL_INFO, ("DHT22 sensor configured on pin %d.", pin));
   	  mgos_msleep(2000);
   	  LOG(LL_INFO, ("Temperature: %f", mgos_dht_get_temp(dht)));
