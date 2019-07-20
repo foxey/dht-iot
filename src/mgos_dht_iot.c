@@ -80,8 +80,8 @@ static void dht_iot_sample_cb(void *cb_arg) {
 	double humidity = mgos_dht_get_humidity(dht);
 	history_update(temp_hist, temp);
 	history_update(humidity_hist, humidity);
-	LOG(LL_INFO, ("Temperature: %f (avg %f)", temp, average(temp_hist)));
-	LOG(LL_INFO, ("Humidity:    %f (avg %f)", humidity, average(humidity_hist)));
+	LOG(LL_INFO, ("Temperature: %f (avg %.1f)", temp, average(temp_hist)));
+	LOG(LL_INFO, ("Humidity:    %f (avg %.1f)", humidity, average(humidity_hist)));
 }
 
 static void rpc_cb(struct mg_rpc_request_info *ri, void *cb_arg,
@@ -89,7 +89,7 @@ static void rpc_cb(struct mg_rpc_request_info *ri, void *cb_arg,
 	struct history *h1 = (struct history *)((struct rpc_args *) cb_arg)->h1;
 	struct history *h2 = (struct history *)((struct rpc_args *) cb_arg)->h2;
 
-	mg_rpc_send_responsef(ri, "{temp: %lf, humidity: %lf}", \
+	mg_rpc_send_responsef(ri, "{temp: %.1lf, humidity: %.1lf}", \
   		average(h1), average(h2));
   (void) fi;
   (void) args;
