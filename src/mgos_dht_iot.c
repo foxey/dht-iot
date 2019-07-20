@@ -60,8 +60,10 @@ struct history *history_init(double value) {
 }
 
 void history_update(struct history *hist, double value) {
-	hist->value[hist->pointer] = value;
-	hist->pointer = (hist->pointer + 1) % hist->size;
+	if (value == value) { // exclude nan values
+		hist->value[hist->pointer] = value;
+		hist->pointer = (hist->pointer + 1) % hist->size;		
+	}
 }
 
 double average(struct history *hist) {
