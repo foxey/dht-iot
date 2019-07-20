@@ -55,6 +55,7 @@ struct history *history_init(double value) {
 	for (i = 0; i < hist->size; i++)
 		hist->value[i] = value;
 	hist->pointer = 0;
+	LOG(LL_INFO, ("Allocated history (size: %f)", hist->size));
 	return hist;
 }
 
