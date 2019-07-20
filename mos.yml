@@ -14,5 +14,6 @@ sources:
 
 libs:
   - origin: https://github.com/mongoose-os-libs/dht
+  - origin: https://github.com/mongoose-os-libs/rpc-common
 
   

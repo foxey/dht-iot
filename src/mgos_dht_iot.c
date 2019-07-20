@@ -22,12 +22,22 @@
 
 #include "mgos.h"
 #include "mgos_dht.h"
+#include "mgos_rpc.h"
 
 static void timer_cb(void *dht) {
 	LOG(LL_INFO, ("Temperature: %f", mgos_dht_get_temp(dht)));
 	LOG(LL_INFO, ("Humidity:    %f", mgos_dht_get_humidity(dht)));
 	void mgos_dht_close(struct mgos_dht *dht);
 }
+
+static void rpc_cb(struct mg_rpc_request_info *ri, void *cb_arg,
+                   struct mg_rpc_frame_info *fi, struct mg_str args) {
+  mg_rpc_send_responsef(ri, "{temp: %lf, humidity: %lf}", \
+  	mgos_dht_get_temp(cb_arg), mgos_dht_get_humidity(cb_arg));
+  (void) fi;
+  (void) args;
+}
+
 
 bool mgos_dht_iot_init(void) {
 	int pin = mgos_sys_config_get_dht_iot_dht_pin();
@@ -39,6 +49,7 @@ bool mgos_dht_iot_init(void) {
 	} else {
 		LOG(LL_INFO, ("DHT22 sensor configured on pin %d.", pin));
 		mgos_set_timer(2000, false, timer_cb, dht);
+		mg_rpc_add_handler(mgos_rpc_get_global(), "Dht.Read", "", rpc_cb, dht);
 	}
   return true;
 }
