@@ -55,7 +55,6 @@ struct history *history_init(double value) {
 	for (i = 0; i < hist->size; i++)
 		hist->value[i] = value;
 	hist->pointer = 0;
-	LOG(LL_INFO, ("Allocated history (size: %d)", hist->size));
 	return hist;
 }
 
@@ -127,7 +126,9 @@ bool mgos_dht_iot_init(void) {
 		int sample_interval = mgos_sys_config_get_dht_iot_sample_interval();
 		mgos_msleep(sample_interval); // wait to prevent nan results from DHT
 		struct history *temp_hist = history_init(mgos_dht_get_temp(dht));
+		LOG(LL_INFO, ("Allocated temp history (size: %d)", temp_hist->size));
 		struct history *humidity_hist = history_init(mgos_dht_get_humidity(dht));
+		LOG(LL_INFO, ("Allocated humidity history (size: %d)", humidity_hist->size));
 		dht_iot_rpc_init(temp_hist, humidity_hist);
 		dht_iot_sample_init(dht, temp_hist, humidity_hist);
 	}
