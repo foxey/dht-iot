@@ -24,32 +24,111 @@
 #include "mgos_dht.h"
 #include "mgos_rpc.h"
 
-static void timer_cb(void *dht) {
+struct history {
+	double *value;
+	int size;
+	int pointer;
+};
+
+struct rpc_args {
+	struct history *h1;
+	struct history *h2;
+};
+
+struct sample_args {
+	struct mgos_dht *dht;
+	struct history *h1;
+	struct history *h2;
+};
+
+static void dht_init_cb(void *dht) {
 	LOG(LL_INFO, ("Temperature: %f", mgos_dht_get_temp(dht)));
 	LOG(LL_INFO, ("Humidity:    %f", mgos_dht_get_humidity(dht)));
-	void mgos_dht_close(struct mgos_dht *dht);
+}
+
+struct history *history_init(double value) {
+	struct history *hist;
+	hist = (struct history *) malloc(sizeof(struct history));
+	hist->size = mgos_sys_config_get_dht_iot_history_size();
+	hist->value = (double *) malloc(hist->size * sizeof(double));
+	int i;
+	for (i = 0; i < hist->size; i++)
+		hist->value[i] = value;
+	hist->pointer = 0;
+	return hist;
+}
+
+void history_update(struct history *hist, double value) {
+	hist->value[hist->pointer] = value;
+	hist->pointer = (hist->pointer + 1) % hist->size;
+}
+
+double average(struct history *hist) {
+	double sum = 0;
+	int i;
+	for (i = 0; i < hist->size; i++)
+		sum += hist->value[i];
+	return sum / hist->size;
+}
+
+static void dht_iot_sample_cb(void *cb_arg) {
+	struct mgos_dht *dht = (struct mgos_dht *)((struct sample_args *) cb_arg)->dht;
+	struct history *temp_hist = (struct history *)((struct sample_args *) cb_arg)->h1;
+	struct history *humidity_hist = (struct history *)((struct sample_args *) cb_arg)->h2;
+	double temp = mgos_dht_get_temp(dht);
+	double humidity = mgos_dht_get_humidity(dht);
+	history_update(temp_hist, temp);
+	history_update(humidity_hist, humidity);
+	LOG(LL_INFO, ("Temperature: %f (avg %f)", temp, average(temp_hist)));
+	LOG(LL_INFO, ("Humidity:    %f (avg %f)", humidity, average(humidity_hist)));
 }
 
 static void rpc_cb(struct mg_rpc_request_info *ri, void *cb_arg,
                    struct mg_rpc_frame_info *fi, struct mg_str args) {
-  mg_rpc_send_responsef(ri, "{temp: %lf, humidity: %lf}", \
-  	mgos_dht_get_temp(cb_arg), mgos_dht_get_humidity(cb_arg));
+	struct history *h1 = (struct history *)((struct rpc_args *) cb_arg)->h1;
+	struct history *h2 = (struct history *)((struct rpc_args *) cb_arg)->h2;
+
+	mg_rpc_send_responsef(ri, "{temp: %lf, humidity: %lf}", \
+  		average(h1), average(h2));
   (void) fi;
   (void) args;
 }
 
+void dht_iot_rpc_init(struct history *temp_hist, struct history *humidity_hist) {
+		struct rpc_args *cb_arg;
+		cb_arg = (struct rpc_args *) malloc(sizeof(struct rpc_args));
+		cb_arg->h1 = temp_hist;
+		cb_arg->h2 = humidity_hist;
+		mg_rpc_add_handler(mgos_rpc_get_global(), "Dht.Read", "", \
+			rpc_cb, (void *)cb_arg);
+}
+
+void dht_iot_sample_init(struct mgos_dht *dht, struct history *temp_hist,\
+	struct history *humidity_hist) {
+		struct sample_args *cb_arg;
+		cb_arg = (struct sample_args *) malloc(sizeof(struct sample_args));
+		cb_arg->dht = dht;
+		cb_arg->h1 = temp_hist;
+		cb_arg->h2 = humidity_hist;
+		int sample_interval = mgos_sys_config_get_dht_iot_sample_interval();
+		mgos_set_timer(sample_interval, true, dht_iot_sample_cb, cb_arg);
+}
 
 bool mgos_dht_iot_init(void) {
 	int pin = mgos_sys_config_get_dht_iot_dht_pin();
-	LOG(LL_INFO, ("DHT-IOT library loaded."));
 
 	struct mgos_dht *dht = mgos_dht_create(pin, DHT22);
 	if (dht == NULL) {
 		LOG(LL_WARN, ("Error configuring DHT22 sensor on pin %d.", pin));
 	} else {
 		LOG(LL_INFO, ("DHT22 sensor configured on pin %d.", pin));
-		mgos_set_timer(2000, false, timer_cb, dht);
-		mg_rpc_add_handler(mgos_rpc_get_global(), "Dht.Read", "", rpc_cb, dht);
+		int sample_interval = mgos_sys_config_get_dht_iot_sample_interval();
+		mgos_msleep(sample_interval); // wait to prevent nan results from DHT
+		struct history *temp_hist = history_init(mgos_dht_get_temp(dht));
+		struct history *humidity_hist = history_init(mgos_dht_get_humidity(dht));
+		dht_iot_rpc_init(temp_hist, humidity_hist);
+		dht_iot_sample_init(dht, temp_hist, humidity_hist);
 	}
-  return true;
+	LOG(LL_INFO, ("DHT-IOT library loaded."));
+	return true;
 }

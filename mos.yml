@@ -8,6 +8,8 @@ config_schema:
   - [ "dht_iot", "o", {title: "DHT-IOT configurations"}]
   - [ "dht_iot.dht", "o", {title: "DHT-IOT sensor configurations"}]
   - [ "dht_iot.dht.pin", "i", 5, {title: "DHT-IOT sensor gpio pin"}]
+  - [ "dht_iot.history_size", "i", 16, {title: "Number of values used for averaging"}]
+  - [ "dht_iot.sample_interval", "i", 3000, {title: "Sample interval in ms"}]
 
 sources:
   - src
