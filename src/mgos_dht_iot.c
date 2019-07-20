@@ -19,6 +19,7 @@
  *
  */
  
+#include <math.h>
 
 #include "mgos.h"
 #include "mgos_dht.h"
@@ -68,7 +69,7 @@ double average(struct history *hist) {
 	int i;
 	for (i = 0; i < hist->size; i++)
 		sum += hist->value[i];
-	return sum / hist->size;
+	return round(10 * sum / hist->size) / 10;
 }
 
 static void dht_iot_sample_cb(void *cb_arg) {
