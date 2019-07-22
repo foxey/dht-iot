@@ -81,25 +81,23 @@ static void rpc_cb(struct mg_rpc_request_info *ri, void *cb_arg,
 void dht_iot_rpc_init(struct history *temp_hist, struct history *humidity_hist)
 {
 		struct rpc_args *cb_arg;
-		cb_arg = (struct rpc_args *) malloc(sizeof(struct rpc_args));
+		cb_arg = (struct rpc_args *) malloc(sizeof(*cb_arg));
 		cb_arg->h1 = temp_hist;
 		cb_arg->h2 = humidity_hist;
 		mg_rpc_add_handler(mgos_rpc_get_global(), "Dht.Read", "", \
 			rpc_cb, (void *)cb_arg);
-		// free(cb_arg);
 }
 
 void dht_iot_sample_init(struct mgos_dht *dht, struct history *temp_hist,\
 	struct history *humidity_hist)
 {
 	struct sample_args *cb_arg;
-	cb_arg = (struct sample_args *) malloc(sizeof(struct sample_args));
+	cb_arg = (struct sample_args *) malloc(sizeof(*cb_arg));
 	cb_arg->dht = dht;
 	cb_arg->h1 = temp_hist;
 	cb_arg->h2 = humidity_hist;
 	int sample_interval = mgos_sys_config_get_dht_iot_sample_interval();
 	mgos_set_timer(sample_interval, true, dht_iot_sample_cb, cb_arg);
-	// free(cb_arg);
 	LOG(LL_INFO, ("Started sample timer (interval %d ms)", sample_interval));
 }
 
