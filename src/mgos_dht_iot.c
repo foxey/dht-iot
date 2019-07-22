@@ -22,7 +22,7 @@
 #include "mgos.h"
 #include "mgos_dht.h"
 #include "mgos_rpc.h"
-#include "dht_iot.h"
+#include "mgos_dht_iot.h"
 
 struct history *history_init(double value)
 {
