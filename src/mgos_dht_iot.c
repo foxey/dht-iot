@@ -19,62 +19,42 @@
  *
  */
  
-#include <math.h>
-
 #include "mgos.h"
 #include "mgos_dht.h"
 #include "mgos_rpc.h"
+#include "dht_iot.h"
 
-struct history {
-	double *value;
-	int size;
-	int pointer;
-};
-
-struct rpc_args {
-	struct history *h1;
-	struct history *h2;
-};
-
-struct sample_args {
-	struct mgos_dht *dht;
-	struct history *h1;
-	struct history *h2;
-};
-
-static void dht_init_cb(void *dht) {
-	LOG(LL_INFO, ("Temperature: %f", mgos_dht_get_temp(dht)));
-	LOG(LL_INFO, ("Humidity:    %f", mgos_dht_get_humidity(dht)));
-}
-
-struct history *history_init(double value) {
+struct history *history_init(double value)
+{
 	struct history *hist;
 	hist = (struct history *) malloc(sizeof(struct history));
 	hist->size = mgos_sys_config_get_dht_iot_history_size();
 	hist->value = (double *) malloc(hist->size * sizeof(double));
-	int i;
-	for (i = 0; i < hist->size; i++)
+
+	for (int i = 0; i < hist->size; i++)
 		hist->value[i] = value;
-	hist->pointer = 0;
+	hist->pointer = hist->size;
 	return hist;
 }
 
-void history_update(struct history *hist, double value) {
+void history_update(struct history *hist, double value)
+{
 	if (value == value) { // exclude nan values
-		hist->value[hist->pointer] = value;
 		hist->pointer = (hist->pointer + 1) % hist->size;		
+		hist->value[hist->pointer] = value;
 	}
 }
 
-double average(struct history *hist) {
+double average(struct history *hist)
+{
 	double sum = 0;
-	int i;
-	for (i = 0; i < hist->size; i++)
+	for (int i = 0; i < hist->size; i++)
 		sum += hist->value[i];
-	return round(10 * sum / hist->size) / 10;
+	return round(10 * sum / hist->size) / 10; // round to one decimal
 }
 
-static void dht_iot_sample_cb(void *cb_arg) {
+static void dht_iot_sample_cb(void *cb_arg)
+{
 	struct mgos_dht *dht = (struct mgos_dht *)((struct sample_args *) cb_arg)->dht;
 	struct history *temp_hist = (struct history *)((struct sample_args *) cb_arg)->h1;
 	struct history *humidity_hist = (struct history *)((struct sample_args *) cb_arg)->h2;
@@ -87,7 +67,8 @@ static void dht_iot_sample_cb(void *cb_arg) {
 }
 
 static void rpc_cb(struct mg_rpc_request_info *ri, void *cb_arg,
-                   struct mg_rpc_frame_info *fi, struct mg_str args) {
+                   struct mg_rpc_frame_info *fi, struct mg_str args)
+{
 	struct history *h1 = (struct history *)((struct rpc_args *) cb_arg)->h1;
 	struct history *h2 = (struct history *)((struct rpc_args *) cb_arg)->h2;
 
@@ -97,17 +78,20 @@ static void rpc_cb(struct mg_rpc_request_info *ri, void *cb_arg,
   (void) args;
 }
 
-void dht_iot_rpc_init(struct history *temp_hist, struct history *humidity_hist) {
+void dht_iot_rpc_init(struct history *temp_hist, struct history *humidity_hist)
+{
 		struct rpc_args *cb_arg;
 		cb_arg = (struct rpc_args *) malloc(sizeof(struct rpc_args));
 		cb_arg->h1 = temp_hist;
 		cb_arg->h2 = humidity_hist;
 		mg_rpc_add_handler(mgos_rpc_get_global(), "Dht.Read", "", \
 			rpc_cb, (void *)cb_arg);
+		free(cb_arg);
 }
 
 void dht_iot_sample_init(struct mgos_dht *dht, struct history *temp_hist,\
-	struct history *humidity_hist) {
+	struct history *humidity_hist)
+{
 	struct sample_args *cb_arg;
 	cb_arg = (struct sample_args *) malloc(sizeof(struct sample_args));
 	cb_arg->dht = dht;
@@ -115,10 +99,12 @@ void dht_iot_sample_init(struct mgos_dht *dht, struct history *temp_hist,\
 	cb_arg->h2 = humidity_hist;
 	int sample_interval = mgos_sys_config_get_dht_iot_sample_interval();
 	mgos_set_timer(sample_interval, true, dht_iot_sample_cb, cb_arg);
+	free(cb_arg);
 	LOG(LL_INFO, ("Started sample timer (interval %d ms)", sample_interval));
 }
 
-bool mgos_dht_iot_init(void) {
+bool mgos_dht_iot_init(void)
+{
 	int pin = mgos_sys_config_get_dht_iot_dht_pin();
 
 	struct mgos_dht *dht = mgos_dht_create(pin, DHT22);
@@ -128,10 +114,13 @@ bool mgos_dht_iot_init(void) {
 		LOG(LL_INFO, ("DHT22 sensor configured on pin %d.", pin));
 		int sample_interval = mgos_sys_config_get_dht_iot_sample_interval();
 		mgos_msleep(sample_interval); // wait to prevent nan results from DHT
+
 		struct history *temp_hist = history_init(mgos_dht_get_temp(dht));
 		LOG(LL_INFO, ("Allocated temp history (size: %d)", temp_hist->size));
+
 		struct history *humidity_hist = history_init(mgos_dht_get_humidity(dht));
 		LOG(LL_INFO, ("Allocated humidity history (size: %d)", humidity_hist->size));
+
 		dht_iot_rpc_init(temp_hist, humidity_hist);
 		dht_iot_sample_init(dht, temp_hist, humidity_hist);
 	}

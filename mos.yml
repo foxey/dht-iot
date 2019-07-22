@@ -11,6 +11,9 @@ config_schema:
   - [ "dht_iot.history_size", "i", 16, {title: "Number of values used for averaging"}]
   - [ "dht_iot.sample_interval", "i", 3000, {title: "Sample interval in ms"}]
 
+includes:
+  - include
+  
 sources:
   - src
 
