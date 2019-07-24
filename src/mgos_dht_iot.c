@@ -140,13 +140,19 @@ static void dht_iot_sample_cb(void *cb_arg)
 bool mgos_dht_iot_init(void)
 {
 	struct mgos_sensor_set *sensor_set = sensor_set_init(MAX_SENSOR_COUNT);
+	bool sensor_is_added = false;
 	int pin = mgos_sys_config_get_dht_iot_dht_pin();
 	if (pin >= 0) {
-		if (sensor_set_add_sensor(sensor_set, pin) == true) {
-			int sample_interval = mgos_sys_config_get_dht_iot_sample_interval();
-			mgos_set_timer(sample_interval, true, dht_iot_sample_cb, (void *)sensor_set);
-			mg_rpc_add_handler(mgos_rpc_get_global(), "Dht.Read", "", rpc_cb, (void *)sensor_set);
-		}
+		sensor_is_added = sensor_set_add_sensor(sensor_set, pin);
+	}
+	pin = mgos_sys_config_get_dht_iot_dht_pin2();
+	if (pin >= 0) {
+		sensor_is_added = sensor_set_add_sensor(sensor_set, pin) || sensor_is_added;
+	}
+	if (sensor_is_added == true) {
+		int sample_interval = mgos_sys_config_get_dht_iot_sample_interval();
+		mgos_set_timer(sample_interval, true, dht_iot_sample_cb, (void *)sensor_set);
+		mg_rpc_add_handler(mgos_rpc_get_global(), "Dht.Read", "", rpc_cb, (void *)sensor_set);
 	}
 	LOG(LL_INFO, ("DHT-IOT library loaded."));
 	return true;

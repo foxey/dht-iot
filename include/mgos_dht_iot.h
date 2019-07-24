@@ -26,7 +26,7 @@ extern "C" {
 
 #include <math.h>
 
-#define MAX_SENSOR_COUNT 1
+#define MAX_SENSOR_COUNT 2
 #define DHT22_INIT_DELAY 2100
 
 struct mgos_sensor_set {
