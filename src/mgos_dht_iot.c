@@ -18,16 +18,65 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
- 
+
 #include "mgos.h"
 #include "mgos_dht.h"
 #include "mgos_rpc.h"
 #include "mgos_dht_iot.h"
 
-struct history *history_init(double value)
+struct mgos_sensor_set *sensor_set_init(int max_count)
 {
-	struct history *hist;
-	hist = (struct history *) malloc(sizeof(struct history));
+	struct mgos_sensor_set *sensor_set;
+	sensor_set = (struct mgos_sensor_set *) malloc(sizeof(*sensor_set));
+	sensor_set->sensors = (struct mgos_sensor **) malloc(max_count*sizeof(sensor_set->sensors));
+	sensor_set->max_count = max_count;
+	sensor_set->count = 0;
+	return sensor_set;
+}
+
+bool sensor_set_add_sensor(struct mgos_sensor_set *sensor_set, int pin)
+{
+	if (sensor_set->count < sensor_set->max_count) {
+		struct mgos_sensor *s = sensor_init(pin);
+		if (s != NULL) {
+			LOG(LL_INFO, ("Sensor on GPIO pin %d initialized", pin));
+			mgos_msleep(DHT22_INIT_DELAY); // wait to prevent nan results from DHT
+
+			s->temp_history = history_init(mgos_dht_get_temp(s->dht));
+			LOG(LL_INFO, ("Allocated temp history (size: %d)", s->temp_history->size));
+
+			s->humidity_history = history_init(mgos_dht_get_humidity(s->dht));
+			LOG(LL_INFO, ("Allocated humidity history (size: %d)", s->humidity_history->size));
+
+			sensor_set->sensors[sensor_set->count] = s;
+			sensor_set->count++;
+			return true;
+		} else {
+			LOG(LL_ERROR, ("Sensor on pin %d not initialized", pin));
+		}
+	}
+	LOG(LL_ERROR, ("Can't add sensor. Maximum count is %d", sensor_set->max_count));
+	return false;
+}
+
+struct mgos_sensor *sensor_init(int pin)
+{
+	struct mgos_sensor *sensor;
+	sensor = (struct mgos_sensor *) malloc(sizeof(*sensor));
+
+	sensor->pin = pin;
+	sensor->dht = mgos_dht_create(pin, DHT22);
+	if (sensor->dht == NULL) {
+		free(sensor);
+		return NULL;
+	}
+	return sensor;
+}
+
+struct mgos_history *history_init(double value)
+{
+	struct mgos_history *hist;
+	hist = (struct mgos_history *) malloc(sizeof(*hist));
 	hist->size = mgos_sys_config_get_dht_iot_history_size();
 	hist->value = (double *) malloc(hist->size * sizeof(double));
 
@@ -37,15 +86,18 @@ struct history *history_init(double value)
 	return hist;
 }
 
-void history_update(struct history *hist, double value)
+bool history_update(struct mgos_history *hist, double value)
 {
 	if (value == value) { // exclude nan values
 		hist->pointer = (hist->pointer + 1) % hist->size;		
 		hist->value[hist->pointer] = value;
+		return true;
+	} else {
+		return false;
 	}
 }
 
-double average(struct history *hist)
+double average(struct mgos_history *hist)
 {
 	double sum = 0;
 	for (int i = 0; i < hist->size; i++)
@@ -53,74 +105,51 @@ double average(struct history *hist)
 	return round(10 * sum / hist->size) / 10; // round to one decimal
 }
 
-static void dht_iot_sample_cb(void *cb_arg)
-{
-	struct mgos_dht *dht = (struct mgos_dht *)((struct sample_args *) cb_arg)->dht;
-	struct history *temp_hist = (struct history *)((struct sample_args *) cb_arg)->h1;
-	struct history *humidity_hist = (struct history *)((struct sample_args *) cb_arg)->h2;
-	double temp = mgos_dht_get_temp(dht);
-	double humidity = mgos_dht_get_humidity(dht);
-	history_update(temp_hist, temp);
-	history_update(humidity_hist, humidity);
-	LOG(LL_INFO, ("Temperature: %f (avg %.1f)", temp, average(temp_hist)));
-	LOG(LL_INFO, ("Humidity:    %f (avg %.1f)", humidity, average(humidity_hist)));
-}
-
 static void rpc_cb(struct mg_rpc_request_info *ri, void *cb_arg,
-                   struct mg_rpc_frame_info *fi, struct mg_str args)
+	struct mg_rpc_frame_info *fi, struct mg_str args)
 {
-	struct history *h1 = (struct history *)((struct rpc_args *) cb_arg)->h1;
-	struct history *h2 = (struct history *)((struct rpc_args *) cb_arg)->h2;
+	struct mgos_sensor_set *ss = (struct mgos_sensor_set *) cb_arg;
+	struct mgos_sensor *s = ss->sensors[0]; 
+	struct mgos_history *temp_hist = s->temp_history;
+	struct mgos_history *humidity_hist = s->humidity_history;
 
 	mg_rpc_send_responsef(ri, "{temp: %.1lf, humidity: %.1lf}", \
-  		average(h1), average(h2));
-  (void) fi;
-  (void) args;
+		average(temp_hist), average(humidity_hist));
+	(void) fi;
+	(void) args;
 }
 
-void dht_iot_rpc_init(struct history *temp_hist, struct history *humidity_hist)
+static void dht_iot_sample_cb(void *cb_arg)
 {
-		struct rpc_args *cb_arg;
-		cb_arg = (struct rpc_args *) malloc(sizeof(*cb_arg));
-		cb_arg->h1 = temp_hist;
-		cb_arg->h2 = humidity_hist;
-		mg_rpc_add_handler(mgos_rpc_get_global(), "Dht.Read", "", \
-			rpc_cb, (void *)cb_arg);
-}
+	struct mgos_sensor_set *ss = (struct mgos_sensor_set *) cb_arg;
+	for (int i=0; i<ss->count; i++) {
+		struct mgos_sensor *s = ss->sensors[i]; 
+		struct mgos_history *temp_hist = s->temp_history;
+		struct mgos_history *humidity_hist = s->humidity_history;
+		struct mgos_dht *dht = s->dht;
 
-void dht_iot_sample_init(struct mgos_dht *dht, struct history *temp_hist,\
-	struct history *humidity_hist)
-{
-	struct sample_args *cb_arg;
-	cb_arg = (struct sample_args *) malloc(sizeof(*cb_arg));
-	cb_arg->dht = dht;
-	cb_arg->h1 = temp_hist;
-	cb_arg->h2 = humidity_hist;
-	int sample_interval = mgos_sys_config_get_dht_iot_sample_interval();
-	mgos_set_timer(sample_interval, true, dht_iot_sample_cb, cb_arg);
-	LOG(LL_INFO, ("Started sample timer (interval %d ms)", sample_interval));
+		double temp = mgos_dht_get_temp(dht);
+		double humidity = mgos_dht_get_humidity(dht);
+
+		history_update(temp_hist, temp);
+		history_update(humidity_hist, humidity);
+
+		LOG(LL_INFO, ("Sensor %d", i));
+		LOG(LL_INFO, ("\tTemperature: %f (avg %.1f)", temp, average(temp_hist)));
+		LOG(LL_INFO, ("\tHumidity:    %f (avg %.1f)", humidity, average(humidity_hist)));
+	}
 }
 
 bool mgos_dht_iot_init(void)
 {
+	struct mgos_sensor_set *sensor_set = sensor_set_init(MAX_SENSOR_COUNT);
 	int pin = mgos_sys_config_get_dht_iot_dht_pin();
-
-	struct mgos_dht *dht = mgos_dht_create(pin, DHT22);
-	if (dht == NULL) {
-		LOG(LL_WARN, ("Error configuring DHT22 sensor on pin %d.", pin));
-	} else {
-		LOG(LL_INFO, ("DHT22 sensor configured on pin %d.", pin));
-		int sample_interval = mgos_sys_config_get_dht_iot_sample_interval();
-		mgos_msleep(sample_interval); // wait to prevent nan results from DHT
-
-		struct history *temp_hist = history_init(mgos_dht_get_temp(dht));
-		LOG(LL_INFO, ("Allocated temp history (size: %d)", temp_hist->size));
-
-		struct history *humidity_hist = history_init(mgos_dht_get_humidity(dht));
-		LOG(LL_INFO, ("Allocated humidity history (size: %d)", humidity_hist->size));
-
-		dht_iot_rpc_init(temp_hist, humidity_hist);
-		dht_iot_sample_init(dht, temp_hist, humidity_hist);
+	if (pin >= 0) {
+		if (sensor_set_add_sensor(sensor_set, pin) == true) {
+			int sample_interval = mgos_sys_config_get_dht_iot_sample_interval();
+			mgos_set_timer(sample_interval, true, dht_iot_sample_cb, (void *)sensor_set);
+			mg_rpc_add_handler(mgos_rpc_get_global(), "Dht.Read", "", rpc_cb, (void *)sensor_set);
+		}
 	}
 	LOG(LL_INFO, ("DHT-IOT library loaded."));
 	return true;

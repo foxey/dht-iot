@@ -29,28 +29,50 @@ extern "C" {
 
 #include <math.h>
 
-struct history {
+#define MAX_SENSOR_COUNT 1
+#define DHT22_INIT_DELAY 2100
+
+struct mgos_sensor_set {
+	int count;
+	int max_count;
+	struct mgos_sensor **sensors;
+};
+
+struct mgos_sensor {
+	int pin;
+	struct mgos_dht *dht;
+	struct mgos_history *temp_history;
+	struct mgos_history *humidity_history;
+};
+
+struct mgos_history {
 	double *value;
 	int size;
 	int pointer;
 };
 
 struct rpc_args {
-	struct history *h1;
-	struct history *h2;
+	struct mgos_history *h1;
+	struct mgos_history *h2;
 };
 
 struct sample_args {
 	struct mgos_dht *dht;
-	struct history *h1;
-	struct history *h2;
+	struct mgos_history *h1;
+	struct mgos_history *h2;
 };
 
-struct history *history_init(double value);
+struct mgos_sensor_set *sensor_set_init(int max_count);
 
-void history_update(struct history *hist, double value);
+bool sensor_set_add_sensor(struct mgos_sensor_set *sensor_set, int pin);
 
-double average(struct history *hist);
+struct mgos_sensor *sensor_init(int pin);
+
+struct mgos_history *history_init(double value);
+
+bool history_update(struct mgos_history *hist, double value);
+
+double average(struct mgos_history *hist);
 
 #ifdef __cplusplus
 }
